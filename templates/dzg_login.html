@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <script type="text/javascript" src="/static/js/jquery-1.11.1.js"></script>
+    <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+    <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/lib/jquery.js"></script>
+    <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/jquery.validate.min.js"></script>
+    <title>Title</title>
+    <script>
+        var countdown = 60;
+        function settime(obj) {
+            if (countdown == 0) {
+                obj.removeAttribute("disabled");
+                obj.value = "免费获取验证码";
+                countdown = 60;
+                return;
+            } else {
+                obj.setAttribute("disabled", true);
+                obj.value = "重新发送(" + countdown + ")";
+                countdown--;
+            }
+            setTimeout(function () {
+                    settime(obj)
+                }
+                , 1000)
+        }
+    </script>
+
+</head>
+<body>
+<div class="container">
+    <div class="form-group">
+        <div class="col-lg-10">
+            <form id="loginForm" role="form" action="" method="post" class="form-horizontal">
+
+                <label for="mobile" class="">手机号码:</label>
+                <div class="input-group m-bot15">
+                    <input type="text" class="form-control" required id="mobile" name="mobile" placeholder="手机号码">
+                    <span class="input-group-btn">
+                         <input type="button" id="forcode" value="免费获取验证码" class="btn btn-success" onclick="settime(this)">
+                        </span>
+                </div>
+                <span id="msgDiv"></span>
+                <p class="help-block">请填写绑定手机号</p>
+                <label for="basic-url" class="">用户名</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="basic-url" minlength="5" name="name" required>
+                    <span class="input-group-addon">没啥用</span>
+                </div>
+                <label for="basic-url" class="">验证码：</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="basic-url1" required name="code">
+                </div>
+                <p class="help-block"></p>
+                <div class="input-group">
+                    <input class="btn btn-success" type="button" id="loginButtonId" value="登录">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(function () {
+        // 点击获取验证码， 向后台发送请求验证码
+        $('#forcode').click(function () {
+            var tel =$("#mobile").val();
+            var reg = /(1[3-9]\d{9}$)/;
+            if (!tel) {
+                alert('手机号不可为空');
+            } else if (!reg.test(tel)){
+                alert('请输入正确的手机号')
+            } else {
+                // 向后台发送ajax请求获取验证码
+                $.ajax({
+                    url: "/houtai/get_code/",
+                    type: "POST",
+                    data: {mobile: $("#mobile").val()},       // 将手机号参数传至后台
+                    success: function (data) {
+                        if (data==='0'){
+                            alert('发送失败')
+                        } else {
+                            console.log('fas')
+                        }
+                    }
+                });
+            }
+        });
+
+        $('#loginButtonId').click(function () {
+            $.ajax({
+                    url: "/houtai/check_user/",
+                    type: "POST",
+                    data: {mobile: $("#mobile").val(),code:$("#basic-url1").val()},       // 将手机号参数传至后台
+                    success: function (data) {
+                        if (data==='1'){
+                            location.href = "{% url 'dzg_houtaiapp:hthome' %}"
+                        }else if (data==='2'){
+                            alert('验证码错误')
+                        }else if (data==='3') {
+                            alert("登陆失败")
+                        }
+                    }
+                });
+        })
+
+
+
+
+
+
+    });
+</script>
+
+
+
+
+</body>
+</html>
