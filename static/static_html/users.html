@@ -1,0 +1,283 @@
+<script>
+    function dell(e) {
+        var s = e.parentNode.parentNode;
+        var re = s.childNodes[1];
+        var res = re.innerHTML;
+        $.ajax({
+            url:'/houtai/del_users/',
+            type: 'get',
+            data: 'id='+res,
+            success:function (data) {
+                if (data==='1') {
+                    s.remove();
+                    alert('删除成功')
+                }else {
+                    alert('删除失败')
+                }
+
+            }
+        })
+
+    }
+
+    //点击列表中的修改，弹出框
+    function changess(e) {
+         var idx = e.parentNode.parentNode.childNodes[1].innerHTML;
+        //发送ajax请求获取数据，并弹出模态框
+        $.ajax({
+            type:'get',
+            url:'http://127.0.0.1:8000/houtai/query_users/',
+            data:'idx='+idx ,
+            success:function (data) {
+                $('#upload_usernamex').val(data[0]['username']);
+                $('#upload_passwordx').val(data[0]['password']);
+                $('#upload_addressx').val(data[0]['address']);
+                $('#upload_statusx').val(data[0]['status']);
+                $('#myModalx').modal('show');
+            },
+            dataType: 'json'
+        })
+
+    }
+    function savefun() {
+        var a = 0
+        $username = $('#upload_usernamex').val();
+        $password = $('#upload_passwordx').val();
+        $status = $('#upload_addressx').val();
+        $address = $('#upload_statusx').val();
+        $.ajax({
+            type:'get',
+            url:'http://127.0.0.1:8000/houtai/change_users/',
+            data:"username="+$username+"&password="+$password+"status="+$status+"&address="+$address,
+            success:function (res) {
+                console.log(res)
+                console.log(res)
+                if(res === 'ok'){
+                    a = 1
+                }else {
+                    a = 0;
+                }
+            },
+            dataType: 'json'
+        });
+        $('#myModalx').modal('hide');
+
+
+    }
+
+
+</script>
+
+
+<div class="page-header">
+    <h2>用户管理</h2>
+</div>
+<ul class="nav nav-tabs ">
+    <li class="active"><a href="#"><b>用户信息</b></a></li>
+</ul>
+
+<div class="panel panel-default" style="padding: 40px">
+    <!-- jqgrid表格的容器 -->
+    <table id="userTable"></table>
+    <div class="alert alert-success" role="alert" id="addBannerMsg" style="display: none">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+        <strong id="msgShow"></strong>
+    </div>
+    <div id="userPagerNew" style="width: auto;height: 50px"></div>
+    <!--模态框的打开方式  可以使用modal方法打开 也可以通过指定data-target与data-toggle两个属性来打开指定的模态框 -->
+    <button class="btn btn-primary" data-aa="@456" data-whatever="@123" id="btn" data-toggle="modal"
+            data-target="#myModal">添加
+    </button>
+</div>
+
+
+<body>
+<!--静态模态框-->
+<div class="modal fade" tabindex="-1" data-backdrop="false" role="dialog" id="myModal">
+    <div class="modal-dialog">
+        <!--模态框内容-->
+        <div class="modal-content">
+            <!--模态框标题-->
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">编辑用户信息</h4>
+            </div>
+            <!--模态框内容体-->
+            <form action="" id="bannerForm">
+                <div class="modal-body form-horizontal">
+                    <div class="form-group ">
+                        <label class="col-sm-2 control-label">用户名：</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="username" id="upload_username" class="form-control"
+                                   placeholder="请输入用户名">
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="col-sm-2 control-label">密码：</label>
+                        <div class="col-sm-10">
+                            <input type="password" name="password" id="upload_password" class="form-control"
+                                   placeholder="请输入密码">
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="col-sm-2 control-label">状态：</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="status" id="upload_status" class="form-control"
+                                   placeholder="请选择文件状态">
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="col-sm-2 control-label">地址：</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="address" id="upload_address" class="form-control" placeholder="请输入地址（省份）">
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="save">保存</button>
+                <button type="button" class="btn btn-warning" id="save" data-dismiss="modal">取消</button>
+            </div>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+
+
+<div class="modal fade" tabindex="-1" data-backdrop="false" role="dialog" id="myModalx">
+    <div class="modal-dialog">
+        <!--模态框内容-->
+        <div class="modal-content">
+            <!--模态框标题-->
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">编辑用户信息</h4>
+            </div>
+            <!--模态框内容体-->
+            <form action="" id="bannerFormx">
+                <div class="modal-body form-horizontal">
+                    <div class="form-group ">
+                        <label class="col-sm-2 control-label">用户名：</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="usernamex" id="upload_usernamex" class="form-control"
+                                   placeholder="请输入用户名">
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="col-sm-2 control-label">密码：</label>
+                        <div class="col-sm-10">
+                            <input type="password" name="passwordx" id="upload_passwordx" class="form-control"
+                                   placeholder="请输入密码">
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="col-sm-2 control-label">状态：</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="statusx" id="upload_statusx" class="form-control"
+                                   placeholder="请选择文件状态">
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="col-sm-2 control-label">地址：</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="addressx" id="upload_addressx" class="form-control" placeholder="请输入地址（省份）">
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="savefun()">保存</button>
+                <button type="button" class="btn btn-warning" data-dismiss="modal">取消</button>
+            </div>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script>
+    $(function () {
+        $('#userTable').jqGrid({
+            url: "/houtai/show_users/",
+            datatype: "json",
+            autowidth: true,
+            pager: "userPagerNew",
+            viewrecords: true,
+            rownumbers: true,
+            rowNum: 3,
+            rowList: [1,2,3,4],
+            styleUI: "Bootstrap",
+            colNames: ["ID", "用户名", "密码", "创建时间", "状态","地址","操作"],
+            colModel: [
+                {name: "id"},
+                {name: "username"},
+                {name: "password"},
+                {name: "times"},
+                {name: "status"},
+                {name: "address"},
+                {
+                    name: "option", formatter: function (cellvalue, options, rowObject) {
+                        var content = "<button class=\"btn btn-danger dell\" onclick=\"dell(this)\">删除</button>"+" <span>&nbsp;</span>"+"<button onclick=\"changess(this)\" class=\"btn btn-warning changess\">修改</button>";
+                        return content
+                    }
+                },
+            ],
+        });
+
+        // 点击模态框的保存按钮  将轮播图的信息发送到后台进行保存
+        $("#save").click(function () {
+
+            // 通过formdata完成文件上传
+            var username = $("#upload_username").val();
+            var password = $("#upload_password").val();
+            var status = $("#upload_status").val();
+            var address = $("#upload_address").val();
+
+
+            var formData = new FormData;
+
+            formData.append('username', username);
+            formData.append('password', password);
+            formData.append('status', status);
+            formData.append('address', address);
+
+            $.ajax({
+                url: "/houtai/add_users/",
+                datatype: "json",
+                type: "post",
+                //  如何获取当前表单的数据
+                data: formData,
+                async: false,
+                contentType: false,     // 不设置contenttype请求头
+                processData: false,     // 使数据不做处理
+                success: function (data) {
+                    // 根据返回值判断是否上传成功，上传成功隐藏模态框
+                    console.log('hahaha')
+                    $('#myModal').modal('hide');
+
+                }
+            });
+        });
+
+
+
+
+
+
+
+    })
+</script>
+</body>
+
+
+
+
+
+

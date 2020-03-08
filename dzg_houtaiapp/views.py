@@ -2,7 +2,7 @@ import json
 import os.path
 import uuid
 from django.shortcuts import render,HttpResponse,redirect
-from dzg_houtaiapp.models import Lunbo
+from dzg_houtaiapp.models import Lunbo,Users
 from django.views.decorators.csrf import csrf_exempt
 import re
 from DZG_cfmw import settings
@@ -76,9 +76,30 @@ def add_banner(request):
 
 
 @csrf_exempt
+def add_users(request):
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+    status = request.POST.get('status')
+    address = request.POST.get('address')
+    times = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    Users.objects.create(username=username, password=password, status=status, address=address, times=times)
+    return HttpResponse('0')
+
+
+@csrf_exempt
 def show_banner(request):
     print('1231')
     lunbo = Lunbo.objects.all().values()
+    print('4444444')
+    json_str = json.dumps(list(lunbo))
+    print(json_str)
+    print('321321321')
+    return HttpResponse(json_str)\
+
+@csrf_exempt
+def show_users(request):
+    print('1231')
+    lunbo = Users.objects.all().values()
     print('4444444')
     json_str = json.dumps(list(lunbo))
     print(json_str)
@@ -97,10 +118,30 @@ def del_banner(request):
         return HttpResponse('0')
 
 
+@csrf_exempt
+def del_users(request):
+    id = request.GET.get('id')
+    res = Users.objects.filter(id=id)
+    if res:
+        res[0].delete()
+        return HttpResponse('1')
+    else:
+        return HttpResponse('0')
+
+
 def query_banner(request):
     id = request.GET.get('idx')
     request.session['id'] = id
     res = Lunbo.objects.filter(id=int(id))
+    if res:
+        rest=res.values()
+        json_str = json.dumps(list(rest))
+        return HttpResponse(json_str)
+
+def query_users(request):
+    id = request.GET.get('idx')
+    request.session['id'] = id
+    res = Users.objects.filter(id=int(id))
     if res:
         rest=res.values()
         json_str = json.dumps(list(rest))
@@ -115,6 +156,26 @@ def change_banner(request):
     try:
         res = Lunbo.objects.filter(id=id)[0]
         res.title = title
+        res.status = status
+        res.times = times
+        res.save()
+        print('ok')
+        return HttpResponse('ok')
+    except:
+        return HttpResponse(0)
+
+def change_users(request):
+    id = request.session.get('id')
+    username = request.GET.get('username')
+    password = request.GET.get('password')
+    address = request.GET.get('address')
+    status = request.GET.get('status')
+    times = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    try:
+        res = Lunbo.objects.filter(id=id)[0]
+        res.username = username
+        res.password = password
+        res.address = address
         res.status = status
         res.times = times
         res.save()

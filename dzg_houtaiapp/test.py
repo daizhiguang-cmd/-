@@ -12,6 +12,11 @@
 # s = b'123'
 # ss = s.decode('utf-8')
 # print(s,type(s),ss)
-import datetime
-times = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-print(times,type(times))
+
+
+# import datetime
+# times = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+# print(times,type(times))
+
+
+

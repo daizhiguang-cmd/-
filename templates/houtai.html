@@ -12,6 +12,9 @@
     <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
     <script src="{% static 'jqgrid/js/trirand/src/jquery.jqGrid.js' %}"></script>
     <script src="{% static 'jqgrid/js/trirand/i18n/grid.locale-cn.js' %}"></script>
+    <script src="{% static 'echarts/echarts.js' %}"></script>
+    <script src="{% static 'echarts/china.js' %}"></script>
+    <script src="{% static 'js/jquery-1.11.1.js' %}"></script>
     <title>Title</title>
 </head>
 <body>
@@ -52,7 +55,11 @@
                 </div>
 {#                <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">#}
                   <div class="panel-body">
-                      <button type="button" class="btn btn-primary form-control" id="showBtn">用户列表</button>
+                      <ul class="nav nav-pills nav-stacked">
+                        <li ><a href="javascript:$('#right10').load('{% static "static_html/users.html" %}')" style="font-weight: bold">用户列表</a></li>
+                        <li ><a href="javascript:$('#right10').load('{% static "static_html/echarts.html" %}')" style="font-weight: bold">用户新增势图</a></li>
+                        <li ><a href="javascript:$('#right10').load('{% static "static_html/map.html" %}')" style="font-weight: bold">用户全国分布图</a></li>
+                      </ul>
                   </div>
 {#                </div>#}
               </div>

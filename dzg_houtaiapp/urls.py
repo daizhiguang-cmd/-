@@ -11,4 +11,12 @@ urlpatterns = [
     path('del_banner/',views.del_banner,name='del_banner'),
     path('query_banner/',views.query_banner,name='query_banner'),
     path('change_banner/',views.change_banner,name='change_banner'),
+
+    path('show_users/',views.show_users,name='show_users'),
+    path('add_users/',views.add_users,name='add_users'),
+    path('query_users/',views.query_users,name='query_users'),
+    path('change_users/',views.change_users,name='change_users'),
+    path('del_users/',views.del_users,name='del_users'),
+
+
 ]

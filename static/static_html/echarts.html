@@ -1,0 +1,49 @@
+<body>
+
+
+<div id="main" style="width: 800px;height: 400px;"></div>
+
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+
+    // 指定图表的配置项和数据
+    var option = {
+        title: {
+            text: '项目新用户'
+        },
+        tooltip: {},
+        legend: {
+            data:['新用户']
+        },
+        xAxis: {
+            data: []
+        },
+        yAxis: {},
+
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+    $.ajax({
+        url:'/user/get_echarts/',
+        datatype:"json",
+        type:"get",
+        success:function (data) {
+            console.log(data);
+            myChart.setOption({
+                xAxis: {
+                    data: data.x
+                },
+                yAxis: {},
+                series:[{
+                    name:'新用户',
+                    type: 'bar',
+                    data:data.y,
+                }]
+
+            });
+        }
+    })
+</script>
+</body>
