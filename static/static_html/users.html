@@ -230,24 +230,18 @@
                 },
             ],
         });
-
         // 点击模态框的保存按钮  将轮播图的信息发送到后台进行保存
         $("#save").click(function () {
-
             // 通过formdata完成文件上传
             var username = $("#upload_username").val();
             var password = $("#upload_password").val();
             var status = $("#upload_status").val();
             var address = $("#upload_address").val();
-
-
             var formData = new FormData;
-
             formData.append('username', username);
             formData.append('password', password);
             formData.append('status', status);
             formData.append('address', address);
-
             $.ajax({
                 url: "/houtai/add_users/",
                 datatype: "json",
@@ -265,13 +259,6 @@
                 }
             });
         });
-
-
-
-
-
-
-
     })
 </script>
 </body>

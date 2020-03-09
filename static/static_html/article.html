@@ -1,0 +1,189 @@
+<script>
+    function dell(e) {
+        var s = e.parentNode.parentNode;
+        var re = s.childNodes[1];
+        var res = re.innerHTML;
+        $.ajax({
+            url:'/article/del_article/',
+            type: 'get',
+            data: 'id='+res,
+            success:function (data) {
+                if (data==='1') {
+                    s.remove();
+                    alert('删除成功')
+                }else {
+                    alert('删除失败')
+                }
+            }
+        })
+
+    }
+    function changess(id) {
+        var data = $("#articleTable").jqGrid("getRowData",id);
+        console.log(data)
+        $('#upload_article_title').val(data.title);
+        $('#upload_article_author').val(data.author);
+        $('#upload_article_status').val(data.status);
+        $("#myModal").modal('show');
+        KindEditor.create('#editor_id',{
+        width:'680px',
+        height:'300px',
+        uploadJson:'/article/upload_img/',
+        fileManagerJson: "/article/get_all_img/",
+        allowFileManager:true,
+        afterBlur :function () {
+            this.sync();
+            }
+        })
+        KindEditor.html("#editor_id",data.content)
+
+
+    }
+
+
+    function showaddarticle() {
+        $("#articleForm")[0].reset();
+        KindEditor.html("#editor_id",'');
+        $("#myModal").modal('show');
+        KindEditor.create('#editor_id',{
+            width:'680px',
+            height:'300px',
+            uploadJson:'/article/upload_img/',
+            fileManagerJson: "/article/get_all_img/",
+            allowFileManager:true,
+            afterBlur :function () {
+                this.sync();
+            }
+        })
+    }
+</script>
+
+
+<div class="page-header">
+    <h2>文章</h2>
+</div>
+<ul class="nav nav-tabs ">
+    <li class="active"><a href="#"><b>文章信息</b></a></li>
+    <li><a style="font-weight: bold" onclick="showaddarticle();"><b>新增文章</b></a></li>
+</ul>
+
+<div class="panel panel-default" style="padding: 40px">
+    <!-- jqgrid表格的容器 -->
+    <table id="articleTable">
+
+    </table>
+    <div class="alert alert-success" role="alert" id="addArticleMsg" style="display: none">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+        <strong id="msgShow"></strong>
+    </div>
+    <div id="articlePagerNew" style="width: auto;height: 50px"></div>
+</div>
+
+
+<body>
+<!--静态模态框-->
+<div class="modal fade" tabindex="-1" data-backdrop="false" role="dialog" id="myModal">
+    <div class="modal-dialog" style="width: 700px;height: 500px">
+        <!--模态框内容-->
+        <div class="modal-content">
+            <!--模态框标题-->
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">编辑文章信息</h4>
+            </div>
+            <!--模态框内容体-->
+            <form action="" id="articleForm">
+                <div class="modal-body form-horizontal">
+                    <div class="form-group ">
+                        <label class="col-sm-2 control-label">标题：</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="article_title" id="upload_article_title" class="form-control"
+                                   placeholder="请输入文章标题">
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="col-sm-2 control-label">作者：</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="article_author" id="upload_article_author" class="form-control"
+                                   placeholder="请输入文章作者">
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="col-sm-2 control-label">状态：</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="article_status" id="upload_article_status">
+                              <option value="1">激活</option>
+                              <option value="2">未激活</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <div class="col-sm-12">
+                            <textarea name="content" id="editor_id"></textarea>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="save">保存</button>
+                <button type="button" class="btn btn-warning" data-dismiss="modal">取消</button>
+            </div>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script>
+    $(function () {
+        $('#articleTable').jqGrid({
+            url: "/article/show_article/",
+            datatype: "json",
+            autowidth: true,
+            pager: "articlePagerNew",
+            viewrecords: true,
+            rownumbers: true,
+            rowNum: 3,
+            rowList: [1,2,3,4],
+            styleUI: "Bootstrap",
+            colNames: ["ID", "标题", "作者","内容","发布时间", "创作时间","状态","操作"],
+            colModel: [
+                {name: "id"},
+                {name: "title"},
+                {name: "author"},
+                {name: "content",hidden:true},
+                {name: "show_time"},
+                {name: "creat_time"},
+                {name: "status"},
+                {
+                    name: "option", formatter: function (cellvalue, options, rowObject) {
+                        var content = "<button class=\"btn btn-danger dell\" onclick=\"dell(this)\">删除</button>"+" <span>&nbsp;</span>"+"<button onclick=\"changess("+rowObject.id+")\" class=\"btn btn-warning changess\">编辑</button>";
+                        return content
+                    }
+                },
+            ],
+        });
+
+        // 点击模态框的保存按钮  将文章的信息发送到后台进行保存
+        $("#save").click(function () {
+            $.ajax({
+                url:"/article/add_article/",
+                type:'get',
+                datatype: 'json',
+                data: $("#articleForm").serialize(),
+                success:function (data) {
+                    $('#myModal').modal('hide');
+                }
+            })
+        });
+    })
+</script>
+</body>
+
+
+
+
+
+
